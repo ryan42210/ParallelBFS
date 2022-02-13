@@ -7,7 +7,7 @@
 #include <atomic>
 #include <omp.h>
 
-#include "c_queue.h"
+#include "my_array.h"
 
 
 struct Result {
@@ -108,50 +108,50 @@ class Graph {
   }
 
 
-  void parallel_bfs_local_q(int source, int th_num) {
-    omp_set_num_threads(th_num);
-    std::vector<std::vector<int>> local_q;
-    local_q.resize(th_num);
+  // void parallel_bfs_local_q(int source, int th_num) {
+  //   omp_set_num_threads(th_num);
+  //   std::vector<std::vector<int>> local_q;
+  //   local_q.resize(th_num);
     
-    Array g_list(num_vertex_);
+  //   Array g_list(num_vertex_);
 
-    g_list.push(source);
-    result_[source].dist_ = 0;
-    result_[source].parent_ = source;
-    int dist = 0;
-    std::atomic<unsigned int> g_counter;
-    while (!g_list.empty()) {
-      g_counter.store(0);
-      #pragma omp parallel default(shared)
-      {
-        int tid = omp_get_thread_num();
-        for (int i = tid; i < g_list.size(); i += th_num) {
-          int curr_node = g_list[i];
-          for (auto &neighbour : graph_[curr_node]) {
-            if (result_[neighbour].dist_ == -1) {
-              local_q[tid].push_back(neighbour);
-              result_[neighbour].parent_ = curr_node;
-              result_[neighbour].dist_ = dist + 1;
-            }
-          }
-        }
-        // combine all local_q
-        int cnt = local_q[tid].size();
-        unsigned int start_idx = g_counter.fetch_add(cnt);
+  //   g_list.push(source);
+  //   result_[source].dist_ = 0;
+  //   result_[source].parent_ = source;
+  //   int dist = 0;
+  //   std::atomic<unsigned int> g_counter;
+  //   while (!g_list.empty()) {
+  //     g_counter.store(0);
+  //     #pragma omp parallel default(shared)
+  //     {
+  //       int tid = omp_get_thread_num();
+  //       for (int i = tid; i < g_list.size(); i += th_num) {
+  //         int curr_node = g_list[i];
+  //         for (auto &neighbour : graph_[curr_node]) {
+  //           if (result_[neighbour].dist_ == -1) {
+  //             local_q[tid].push_back(neighbour);
+  //             result_[neighbour].parent_ = curr_node;
+  //             result_[neighbour].dist_ = dist + 1;
+  //           }
+  //         }
+  //       }
+  //       // combine all local_q
+  //       int cnt = local_q[tid].size();
+  //       unsigned int start_idx = g_counter.fetch_add(cnt);
         
-        #pragma omp barrier
-        if (cnt > 0) {
-          g_list.copy_to(local_q[tid], start_idx, cnt);
-          local_q[tid].clear();
-        }
-        if(local_q[tid].capacity() > num_vertex_ / th_num) local_q[tid].shrink_to_fit();
-      }
-      g_list.set_size(g_counter);
-      dist++;
-    }
-  }
+  //       #pragma omp barrier
+  //       if (cnt > 0) {
+  //         g_list.copy_to(local_q[tid], start_idx, cnt);
+  //         local_q[tid].clear();
+  //       }
+  //       if(local_q[tid].capacity() > num_vertex_ / th_num) local_q[tid].shrink_to_fit();
+  //     }
+  //     g_list.set_size(g_counter);
+  //     dist++;
+  //   }
+  // }
 
-  void parallel_bfs_local_q2(int source, int th_num) {
+  void parallel_bfs_local_q(int source, int th_num) {
     omp_set_num_threads(th_num);
     std::vector<std::vector<int>> local_q;
     local_q.resize(th_num);

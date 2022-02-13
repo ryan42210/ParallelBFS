@@ -1,1 +1,0 @@
-Let m be the number of undirected edges in a traversed component of the graph counted as number of self-loop edge tuples within component traversed added to halved number of non self-loop edge tuples within component traversed.

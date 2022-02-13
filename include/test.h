@@ -49,7 +49,7 @@ class Test {
     for (int i = 0; i < TRIAL_NUM; i++) {
       int source = source_[i];
       auto start = std::chrono::steady_clock::now();
-      graph_.parallel_bfs_local_q2(source, th_num);
+      graph_.parallel_bfs_local_q(source, th_num);
       auto end = std::chrono::steady_clock::now();
       auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
       time_.push_back(duration.count());

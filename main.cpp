@@ -12,14 +12,22 @@ int main(int argc, char *argv[]) {
   }
 
   bool is_rmat = false;
+  bool is_mm = false;
   if (argc >= 3) {
-    is_rmat = true;
+    if (argv[2] == "-h")
+      is_rmat = true;
+    else if (argv[2] == "-m")
+      is_mm = true;
   }
 
   const char* filename = argv[1];
 
   Graph g;
-  read_edge(filename, g, is_rmat);
+  if (is_mm) {
+    read_mm(filename, g);
+  } else {
+    read_edge(filename, g, is_rmat);
+  }
 
   Test test;
   test.set_graph(g);

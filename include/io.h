@@ -12,10 +12,6 @@
 
 #define IO_BUFFER_SIZE 20
 
-int read_adj_list(const char *filename) {
-  FILE* f = fopen(filename, "r");
-  return 0;
-}
 
 int read_edge(const char *filename, Graph &g, bool is_rmat) {
   FILE* f = fopen(filename, "r");
